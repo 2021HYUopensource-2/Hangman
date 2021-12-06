@@ -309,6 +309,7 @@ def ReciveWord():
 						return text
 					elif event.key == pygame.K_BACKSPACE:
 						text = text[:-1]
+						subtext = subtext[:-1]
 					else:
 						text += event.unicode
 						subtext += '*'

@@ -319,11 +319,42 @@ def ReciveWord():
 		txt_surface = font.render(subtext, True, color)
 		width = max(200, txt_surface.get_width()+10)
 		input_box.w = width
-		win.blit(txt,(100,300))
+		win.blit(txt,(100,250))
 		win.blit(txt_surface, (input_box.x+5, input_box.y+5))
 		pygame.draw.rect(win, color, input_box, 2)
 
 		pygame.display.flip()
+
+def mode():
+    img = pygame.image.load('Thehangman.jpeg')
+
+    done = False
+    while not done :
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                    done = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    done = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                width = pygame.mouse.get_pos()[0]
+                height = pygame.mouse.get_pos()[1]
+                if width >= 640 and width <=850:
+                    if height >= 180 and height <= 240:
+                        print(width,height)
+                        return 0
+                    elif height >= 400 and height <= 460:
+                        print(width,height)
+                        return 1
+
+        win.fill(WHITE)
+        single = lost_font.render("Single Mode",True, BLACK)
+        multi = lost_font.render("Multi Mode",True,BLACK)
+        win.blit(single,(640,180))
+        win.blit(multi,(640,400))
+        win.blit(img,(150,0))
+
+        pygame.display.flip()
 
 #MAINLINE
 
@@ -340,7 +371,11 @@ for i in range(26):
     buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
     # buttons.append([color, x_pos, y_pos, radius, visible, char])
 
-word = ReciveWord()
+if mode() == 0 :
+    word = randomWord()
+else :
+    word = ReciveWord()
+
 inPlay = True
 mini_game = 0
 

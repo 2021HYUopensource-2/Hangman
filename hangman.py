@@ -319,14 +319,14 @@ def ReciveWord():
 		txt_surface = font.render(subtext, True, color)
 		width = max(200, txt_surface.get_width()+10)
 		input_box.w = width
-		win.blit(txt,(100,300))
+		win.blit(txt,(100,250))
 		win.blit(txt_surface, (input_box.x+5, input_box.y+5))
 		pygame.draw.rect(win, color, input_box, 2)
 
 		pygame.display.flip()
 
 def mode():
-    img = pygame.image.load('The hangman.jpeg')
+    img = pygame.image.load('Thehangman.jpeg')
 
     done = False
     while not done :

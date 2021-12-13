@@ -104,6 +104,7 @@ def main():
                         gameWonAnimation(mainBoard)
                         pygame.time.wait(2000)
                         
+                        
 
                         #게임보드 재생성기능 제거함
 

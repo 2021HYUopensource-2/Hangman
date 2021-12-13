@@ -1,14 +1,15 @@
-# Memory Puzzle
+#Memory Puzzle
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
 import random, pygame, sys
 from pygame.locals import *
-
+from time import sleep
+result = " "
 FPS = 30 # frames per second, the general speed of the program
-WINDOWWIDTH = 640 # size of window's width in pixels
-WINDOWHEIGHT = 480 # size of windows' height in pixels
+WINDOWWIDTH = 960 # size of window's width in pixels
+WINDOWHEIGHT = 640 # size of windows' height in pixels
 REVEALSPEED = 8 # speed boxes' sliding reveals and covers
 BOXSIZE = 40 # size of box height & width in pixels
 GAPSIZE = 10 # size of gap between boxes in pixels
@@ -45,8 +46,12 @@ ALLCOLORS = (RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, CYAN)
 ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL)
 assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= BOARDWIDTH * BOARDHEIGHT, "Board is too big for the number of shapes/colors defined."
 
+
+total_time  = 60
+start_ticks = pygame.time.get_ticks()
+
 def main():
-    global FPSCLOCK, DISPLAYSURF
+    global FPSCLOCK, DISPLAYSURF, result
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -55,15 +60,23 @@ def main():
     mousey = 0 # used to store y coordinate of mouse event
     pygame.display.set_caption('Memory Game')
 
+
+    game_font = pygame.font.Font(None, 40)
     mainBoard = getRandomizedBoard()
     revealedBoxes = generateRevealedBoxesData(False)
 
-    firstSelection = None # stores the (x, y) of the first box clicked.
+    firstSelection = None # stores the (x, y) of the first box clicked. 
+    chance = 0
+    running = True
+    while running: # main game loop     
+        elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
+        timer = game_font.render("timer: " + str(int(total_time - elapsed_time)), True, WHITE)
 
-    DISPLAYSURF.fill(BGCOLOR)
-    startGameAnimation(mainBoard)
+        DISPLAYSURF.blit(timer, (10,10))
+        if total_time - elapsed_time <= 0:
+            running = False
+            result = "lose"
 
-    while True: # main game loop
         mouseClicked = False
 
         DISPLAYSURF.fill(BGCOLOR) # drawing the window
@@ -78,6 +91,10 @@ def main():
             elif event.type == MOUSEBUTTONUP:
                 mousex, mousey = event.pos
                 mouseClicked = True
+            elif event.type == KEYDOWN:
+                if event.key == pygame.K_SPACE and chance < 2:
+                    startGameAnimation(mainBoard)
+                    chance += 1
 
         boxx, boxy = getBoxAtPixel(mousex, mousey)
         if boxx != None and boxy != None:
@@ -103,22 +120,20 @@ def main():
                     elif hasWon(revealedBoxes): # check if all pairs found
                         gameWonAnimation(mainBoard)
                         pygame.time.wait(2000)
-                        
-
+                        result = "win"
+                        running = False
                         #게임보드 재생성기능 제거함
-
-                        # Show the fully unrevealed board for a second.
-                        drawBoard(mainBoard, revealedBoxes)
-                        pygame.display.update()
-                        pygame.time.wait(1000)
 
                         # Replay the start game animation.(게임 재시작기능 제거함)
                     firstSelection = None # reset firstSelection variable
 
 
         # Redraw the screen and wait a clock tick.
-        pygame.display.update()
         FPSCLOCK.tick(FPS)
+        pygame.display.flip()
+        if not running:
+            sleep(1)
+    return result
 
 
 def generateRevealedBoxesData(val):
@@ -286,6 +301,3 @@ def hasWon(revealedBoxes):
             return False # return False if any boxes are covered.
     return True
 
-
-if __name__ == '__main__':
-    main()

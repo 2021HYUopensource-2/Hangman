@@ -341,10 +341,8 @@ def mode():
                 height = pygame.mouse.get_pos()[1]
                 if width >= 640 and width <=850:
                     if height >= 180 and height <= 240:
-                        print(width,height)
                         return 0
-                    elif height >= 400 and height <= 460:
-                        print(width,height)
+                    elif height >= 400 and height <= 480:
                         return 1
 
         win.fill(WHITE)
